@@ -5,7 +5,8 @@ import json
 class LargestVocabulary(MRJob):
 
     def mapper_get_unique_words(self, _, line):
-        yield json_string['parent_id'], json_string['parent_id']
+        json_string = json.loads(line)
+        yield json_string['subreddit_id'], (json_string['parent_id'], json_string['name'])
 
     def reducer_sum_unique_words(self, subr_id, unique_counts):
         yield None, (subr_id, sum(unique_counts))
@@ -16,9 +17,9 @@ class LargestVocabulary(MRJob):
 
     def steps(self):
         return [
-            MRStep(mapper=self.mapper_get_unique_words,
-                   reducer=self.reducer_sum_unique_words),
-            MRStep(reducer=self.reducer_get_highest_ten)
+            MRStep(mapper=self.mapper_get_unique_words)
+                #    reducer=self.reducer_sum_unique_words),
+            # MRStep(reducer=self.reducer_get_highest_ten)
         ]
 
 if __name__ == '__main__':
