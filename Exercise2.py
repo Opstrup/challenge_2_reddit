@@ -7,7 +7,7 @@ class CommonAuthors(MRJob):
 
 
 
-    def mapper(self,_,line):
+    def mapper_authors_subreddit_ids(self,_,line):
         json_string = json.loads(line)
         yield json_string['author'], json_string['subreddit_id']
 
@@ -29,7 +29,7 @@ class CommonAuthors(MRJob):
 
     def steps(self):
         return [
-            MRStep(mapper=self.mapper,
+            MRStep(mapper=self.mapper_authors_subreddit_ids,
                    reducer=self.reducer_remove_deleted_authors),
             MRStep(mapper=self.mapper_generating_pairs,
                    reducer=self.reducer_top10)
