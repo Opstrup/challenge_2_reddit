@@ -21,12 +21,13 @@ class LargestVocabulary(MRJob):
         else:
             yield subr, 1
 
-    def mapper_tester_map(self, subr, value):
-        yield subr, value
-
     def reducer_calculate_average_depth(self, subr, values):
-        list_values = (list(values))
-        yield subr, sum(list_values) / list_values.count(0)
+        list_values = list(values)
+        print(subr, list_values)
+        if list_values.count(0) is 0:
+            yield subr, 0
+        else:
+            yield subr, sum(list_values) / list_values.count(0)
 
     def reducer_get_highest_ten(self, _, unique_count):
         sorted_list = sorted(unique_count, key=lambda count: count[1], reverse = True)
@@ -35,11 +36,8 @@ class LargestVocabulary(MRJob):
     def steps(self):
         return [
             MRStep(mapper=self.mapper_get_data),
-            MRStep(mapper=self.mapper_yield_funny_subreddits),
             MRStep(mapper=self.reducer_count_number_of_comments,
                    reducer=self.reducer_calculate_average_depth)
-                #    reducer=self.reducer_count_number_of_comments),
-            # MRStep(mapper=self.reducer_count_number_of_comments),
         ]
 
 if __name__ == '__main__':
