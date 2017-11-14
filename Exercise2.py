@@ -3,13 +3,12 @@ from mrjob.step import MRStep
 import json
 import itertools
 
+
 class CommonAuthors(MRJob):
 
-
-
     def mapper_authors_subreddit_ids(self,_,line):
-        json_string = json.loads(line)
-        yield json_string['author'], json_string['subreddit_id']
+    	json_string = json.loads(line)
+    	yield json_string['author'], json_string['subreddit_id']
 
     def reducer_remove_deleted_authors(self,author,subreddit_id):
         if author != "[deleted]":
@@ -37,3 +36,5 @@ class CommonAuthors(MRJob):
 
 if __name__ == '__main__':
     CommonAuthors.run()
+
+    
