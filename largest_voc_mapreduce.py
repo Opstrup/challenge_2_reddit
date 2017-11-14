@@ -13,10 +13,10 @@ class LargestVocabulary(MRJob):
             lower_string = lower_string.replace(sym, "")
 
         unique_count = len(set(lower_string.split()))
-        yield json_string['subreddit_id'], unique_count
+        yield (json_string['subreddit_id'], json_string['subreddit']), unique_count
 
-    def reducer_sum_unique_words(self, subr_id, unique_counts):
-        yield None, (subr_id, sum(unique_counts))
+    def reducer_sum_unique_words(self, subr, unique_counts):
+        yield None, (subr, sum(unique_counts))
 
     def reducer_get_highest_ten(self, _, unique_count):
         sorted_list = sorted(unique_count, key=lambda count: count[1], reverse = True)
