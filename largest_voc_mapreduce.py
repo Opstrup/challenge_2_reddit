@@ -5,7 +5,7 @@ import json
 class LargestVocabulary(MRJob):
 
     def mapper_get_unique_words(self, _, line):
-        symbols = ['\n','`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[',']','}','|','\\',':',';','"',"'",'<','>','.','?','/',',']
+        symbols = ['\n','`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[',']','}','|','\\',':',';','"',"'",'<','>','.','?','/',',', '\r']
         json_string = json.loads(line)
         lower_string = json_string['body'].lower()
 
