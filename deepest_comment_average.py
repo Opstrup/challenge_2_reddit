@@ -15,7 +15,7 @@ class LargestVocabulary(MRJob):
         if subr_id == 't5_2qh33':
             yield subr, value
 
-    def reducer_count_number_of_comments(self, subr, value):
+    def mapper_count_number_of_comments(self, subr, value):
         if value[:2] == 't3':
             yield subr, 0
         else:
@@ -23,21 +23,33 @@ class LargestVocabulary(MRJob):
 
     def reducer_calculate_average_depth(self, subr, values):
         list_values = list(values)
-        print(subr, list_values)
         if list_values.count(0) is 0:
             yield subr, 0
         else:
             yield subr, sum(list_values) / list_values.count(0)
 
-    def reducer_get_highest_ten(self, _, unique_count):
-        sorted_list = sorted(unique_count, key=lambda count: count[1], reverse = True)
-        yield "10 highest average depth", sorted_list[:10]
+    def reducer_get_highest_ten(self, subr, average_depth):
+        res_list = []
+        if len(res_list) < 10:
+            res_list.append(average_depth)
+            sorted(res_list, reverse = True)
+            yield subr, sorted(res_list, reverse = True)
+        elif res_list[9] < average_depth:
+            print('res list', res_list)
+            res_list[9] = average_depth
+            yield subr, sorted(res_list, reverse = True)
+        
+
+        # yield "10 highest average depth", res_list
+        # sorted_list = sorted(list(average_depth), reverse = True)
+        # yield "10 highest average depth", sorted_list[:10]
 
     def steps(self):
         return [
             MRStep(mapper=self.mapper_get_data),
-            MRStep(mapper=self.reducer_count_number_of_comments,
-                   reducer=self.reducer_calculate_average_depth)
+            MRStep(mapper=self.mapper_count_number_of_comments,
+                   reducer=self.reducer_calculate_average_depth),
+            MRStep(mapper=self.reducer_get_highest_ten)
         ]
 
 if __name__ == '__main__':
